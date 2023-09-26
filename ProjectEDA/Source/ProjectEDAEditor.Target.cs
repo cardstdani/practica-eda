@@ -5,10 +5,11 @@ using System.Collections.Generic;
 
 public class ProjectEDAEditorTarget : TargetRules
 {
-	public ProjectEDAEditorTarget( TargetInfo Target) : base(Target)
+	public ProjectEDAEditorTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
-		ExtraModuleNames.AddRange( new string[] { "ProjectEDA" } );
+		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
+		ExtraModuleNames.Add("ProjectEDA");
 	}
 }

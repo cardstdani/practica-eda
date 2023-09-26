@@ -1,6 +1,7 @@
 package es.uva.eda;
 
 import java.util.Arrays;
+import com.aparapi.*;
 
 public class CeldaSimple implements Celda {
 	private boolean[][] grid;

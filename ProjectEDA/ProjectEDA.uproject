@@ -17,14 +17,6 @@
 			"TargetAllowList": [
 				"Editor"
 			]
-		},
-		{
-			"Name": "SunPosition",
-			"Enabled": true
-		},
-		{
-			"Name": "GeoReferencing",
-			"Enabled": true
 		}
 	]
 }

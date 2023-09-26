@@ -26,10 +26,11 @@
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
-			<groupId>org.tensorflow</groupId>
-			<artifactId>tensorflow-core-platform</artifactId>
-			<version>0.3.3</version>
+			<groupId>com.aparapi</groupId>
+			<artifactId>aparapi</artifactId>
+			<version>3.0.0</version>
 		</dependency>
 	</dependencies>
 
