@@ -27,8 +27,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "C++")
 	void RayoCosmico(int32 i, int32 j);
 	bool Helper(int32 i, int32 j);
+	UFUNCTION(BlueprintCallable, Category = "C++")
 	bool Cortocircuito();
 	TArray<TArray<bool>> grid;
 	TArray<TArray<bool>> visited;
+	TArray<TArray<AActor*>> cubitosArray;
+	TArray<AActor*> cubitosBordeArray;
 	int32 iterations;
+	AActor* SpawnCubito(float x, float y, float z, int32 ColorValue);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cubito")
+	TSoftObjectPtr<class UBlueprint> CubitoBlueprint;	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cubito")
+	float space = 100;
 };

@@ -2,6 +2,7 @@
 
 
 #include "CeldaSimple.h"
+#include "Kismet/GameplayStatics.h"
 #include "Containers/Array.h"
 #include "CoreMinimal.h"
 
@@ -29,32 +30,93 @@ void ACeldaSimple::Tick(float DeltaTime)
 
 void ACeldaSimple::Inicializar(int32 n)
 {
-    grid.Init(TArray<bool>(), n);
-    visited.Init(TArray<bool>(), n);
-    
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < n; j++)
-        {            
-            grid[i].Add(false);
+    if (cubitosArray.Num() > 0) {
+        for (int i = 0; i < cubitosArray.Num(); i++)
+        {
+            cubitosBordeArray[2 * i]->Destroy();
+            cubitosBordeArray[(2 * i) + 1]->Destroy();
+            for (int j = 0; j < cubitosArray[0].Num(); j++)
+            {
+                cubitosArray[i][j]->Destroy();
+            }
         }
     }
+    grid.Init(TArray<bool>(), n);
+    visited.Init(TArray<bool>(), n);
+    cubitosArray.SetNum(n);
+
+    for (int i = 0; i < n; i++)
+    {
+        cubitosArray[i].SetNum(n);
+        for (int j = 0; j < n; j++)
+        {
+            grid[i].Add(false);
+            visited[i].Add(false);
+            cubitosArray[i][j] = SpawnCubito(i * space, j * space, 0, 1);
+        }
+    }
+
+    cubitosBordeArray.SetNum(2 * n);
+    for (int i = 0; i < n; i++)
+    {
+        cubitosBordeArray[2 * i] = SpawnCubito(-space, i * space, 0, 0);
+        cubitosBordeArray[(2 * i) + 1] = SpawnCubito(n * space, i * space, 0, 0);
+    }
+}
+
+AActor* ACeldaSimple::SpawnCubito(float x, float y, float z, int32 ColorValue)
+{
+    if (CubitoBlueprint.IsValid())
+    {
+        UWorld* const World = GetWorld();
+        if (World)
+        {
+            FActorSpawnParameters SpawnParams;
+            SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+            UBlueprint* LoadedBlueprint = Cast<UBlueprint>(CubitoBlueprint.Get());
+
+            if (LoadedBlueprint)
+            {
+                UClass* CubitoClass = LoadedBlueprint->GeneratedClass;
+                AActor* SpawnedActor = World->SpawnActor<AActor>(CubitoClass, FVector(x, y, z), FRotator(0, 0, 0), SpawnParams);  
+
+                if (SpawnedActor)
+                {
+                    UFunction* CustomEventFunction = SpawnedActor->FindFunction(FName(TEXT("SetColor")));
+                    SpawnedActor->ProcessEvent(CustomEventFunction, &ColorValue);   
+                    return SpawnedActor;                                    
+                }               
+            }
+        }
+    }
+    return nullptr;
 }
 
 void ACeldaSimple::RayoCosmico(int32 i, int32 j)
 {
+    //UE_LOG(LogTemp, Warning, TEXT("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
     if (!grid[i][j])
     {
         grid[i][j] = true;
+
+        AActor* Actor = cubitosArray[i][j];
+        UFunction* CustomEventFunction = Actor->FindFunction(FName(TEXT("SetColor")));
+        int32 ColorValue = 2;
+        Actor->ProcessEvent(CustomEventFunction, &ColorValue);
     }
     iterations++;
 }
 
 bool ACeldaSimple::Helper(int32 i, int32 j)
 {
+    AActor* Actor = cubitosArray[i][j];
+    UFunction* CustomEventFunction = Actor->FindFunction(FName(TEXT("SetColor")));
+    int32 ColorValue = 3;
+    Actor->ProcessEvent(CustomEventFunction, &ColorValue);
     if (i == (grid.Num() - 1))
     {
-        UE_LOG(LogTemp, Warning, TEXT("%d %d"), i, j);
+        //UE_LOG(LogTemp, Warning, TEXT("%d %d"), i, j);        
         return true;
     }
     visited[i][j] = true;
