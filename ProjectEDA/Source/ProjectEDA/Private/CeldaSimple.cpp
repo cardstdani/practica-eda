@@ -110,6 +110,7 @@ void ACeldaSimple::RayoCosmico(int32 i, int32 j)
 
 bool ACeldaSimple::Helper(int32 i, int32 j)
 {
+
     AActor* Actor = cubitosArray[i][j];
     UFunction* CustomEventFunction = Actor->FindFunction(FName(TEXT("SetColor")));
     int32 ColorValue = 3;
@@ -119,6 +120,7 @@ bool ACeldaSimple::Helper(int32 i, int32 j)
         //UE_LOG(LogTemp, Warning, TEXT("%d %d"), i, j);        
         return true;
     }
+    
     visited[i][j] = true;
     TArray<TArray<int32>> nei = {
         {FMath::Max(0, i - 1), j},
