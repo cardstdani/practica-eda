@@ -2,6 +2,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Containers/Array.h"
 #include "CoreMinimal.h"
+#include "Async/Async.h"
 
 // Sets default values
 ACeldaSimple::ACeldaSimple()
@@ -25,6 +26,122 @@ void ACeldaSimple::Tick(float DeltaTime)
 
 }
 
+void ACeldaSimple::SimularAsync(int32 n)
+{
+    AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [=]()
+        {
+            for (int i = 2; i < n; i++)
+            {
+                InicializarSim(i);
+                double startSeconds = FPlatformTime::Seconds();
+                while (!CortocircuitoSim()) {
+                    int a = FMath::RandRange(0, i - 1);
+                    int b = FMath::RandRange(0, i - 1);
+                    RayoCosmicoSim(a, b);
+                }
+                double secondsElapsed = FPlatformTime::Seconds() - startSeconds;
+                UE_LOG(LogTemp, Warning, TEXT("%i iteration executed in %f seconds."), i, secondsElapsed);
+
+                // Notify when one simulation is done (if needed)
+                if (i < n - 1)
+                {
+                    FGraphEventRef CompletionTask = FFunctionGraphTask::CreateAndDispatchWhenReady([&]()
+                        {
+                            OnSimulationCompleted(n);
+                        }, TStatId(), nullptr, ENamedThreads::GameThread);
+                }
+            }
+        });
+}
+
+void ACeldaSimple::OnSimulationCompleted(int32 SimulationIndex)
+{
+    // Handle the completion of a simulation
+    UE_LOG(LogTemp, Warning, TEXT("Simulation %d completed."), SimulationIndex);
+}
+
+
+void ACeldaSimple::InicializarSim(int32 n)
+{
+    grid.Init(TArray<bool>(), n);
+    visited.Init(TArray<bool>(), n);
+
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            grid[i].Add(false);
+            visited[i].Add(false);
+        }
+    }
+}
+
+void ACeldaSimple::RayoCosmicoSim(int32 i, int32 j)
+{
+    if (!grid[i][j])
+    {
+        grid[i][j] = true;
+    }
+    iterations++;
+}
+
+bool ACeldaSimple::HelperSim(int32 i, int32 j)
+{
+    if (i == (grid.Num() - 1))
+    {       
+        return true;
+    }
+
+    visited[i][j] = true;
+    TArray<TArray<int32>> nei = {
+        {FMath::Max(0, i - 1), j},
+        {FMath::Min(grid.Num() - 1, i + 1), j},
+        {i, FMath::Max(0, j - 1)},
+        {i, FMath::Min(grid[0].Num() - 1, j + 1)},
+        {FMath::Max(0, i - 1), FMath::Max(0, j - 1)},
+        {FMath::Min(grid.Num() - 1, i + 1), FMath::Min(grid[0].Num() - 1, j + 1)},
+        {FMath::Max(0, i - 1), FMath::Min(grid[0].Num() - 1, j + 1)},
+        {FMath::Min(grid.Num() - 1, i + 1), FMath::Max(0, j - 1)}
+    };
+
+    for (auto k : nei)
+    {
+        if (!visited[k[0]][k[1]] && grid[k[0]][k[1]])
+        {
+            if (HelperSim(k[0], k[1]))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool ACeldaSimple::CortocircuitoSim()
+{
+    for (int32 i = 0; i < grid.Num(); i++)
+    {
+        for (int32 j = 0; j < grid[0].Num(); j++)
+        {
+            visited[i][j] = false;
+        }
+    }
+
+    for (int32 i = 0; i < grid[0].Num(); i++)
+    {
+        if (grid[0][i])
+        {
+            if (HelperSim(0, i))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
+//TEST FUNCTIONS
 void ACeldaSimple::Inicializar(int32 n)
 {
     if (cubitosArray.Num() > 0) {
