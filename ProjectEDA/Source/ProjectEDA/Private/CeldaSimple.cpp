@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "CeldaSimple.h"
 #include "Kismet/GameplayStatics.h"
 #include "Containers/Array.h"
@@ -9,22 +6,22 @@
 // Sets default values
 ACeldaSimple::ACeldaSimple()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+    // Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+    PrimaryActorTick.bCanEverTick = true;
 
 }
 
 // Called when the game starts or when spawned
 void ACeldaSimple::BeginPlay()
 {
-	Super::BeginPlay();
-	
+    Super::BeginPlay();
+
 }
 
 // Called every frame
 void ACeldaSimple::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+    Super::Tick(DeltaTime);
 
 }
 
@@ -79,18 +76,25 @@ AActor* ACeldaSimple::SpawnCubito(float x, float y, float z, int32 ColorValue)
             if (LoadedBlueprint)
             {
                 UClass* CubitoClass = LoadedBlueprint->GeneratedClass;
-                AActor* SpawnedActor = World->SpawnActor<AActor>(CubitoClass, FVector(x, y, z), FRotator(0, 0, 0), SpawnParams);  
-
+                AActor* SpawnedActor = World->SpawnActor<AActor>(CubitoClass, FVector(x, y, z), FRotator(0, 0, 0), SpawnParams);
+                
                 if (SpawnedActor)
                 {
                     UFunction* CustomEventFunction = SpawnedActor->FindFunction(FName(TEXT("SetColor")));
-                    SpawnedActor->ProcessEvent(CustomEventFunction, &ColorValue);   
-                    return SpawnedActor;                                    
-                }               
+                    SpawnedActor->ProcessEvent(CustomEventFunction, &ColorValue);
+                    return SpawnedActor;
+                }
             }
         }
     }
     return nullptr;
+}
+
+void ACeldaSimple::SetColor(int i, int j, int color) {
+    AActor* Actor = cubitosArray[i][j];
+    UFunction* CustomEventFunction = Actor->FindFunction(FName(TEXT("SetColor")));
+    int32 ColorValue = 2;
+    Actor->ProcessEvent(CustomEventFunction, &color);
 }
 
 void ACeldaSimple::RayoCosmico(int32 i, int32 j)
@@ -100,10 +104,7 @@ void ACeldaSimple::RayoCosmico(int32 i, int32 j)
     {
         grid[i][j] = true;
 
-        AActor* Actor = cubitosArray[i][j];
-        UFunction* CustomEventFunction = Actor->FindFunction(FName(TEXT("SetColor")));
-        int32 ColorValue = 2;
-        Actor->ProcessEvent(CustomEventFunction, &ColorValue);
+        SetColor(i, j, 2);
     }
     iterations++;
 }
@@ -111,16 +112,13 @@ void ACeldaSimple::RayoCosmico(int32 i, int32 j)
 bool ACeldaSimple::Helper(int32 i, int32 j)
 {
 
-    AActor* Actor = cubitosArray[i][j];
-    UFunction* CustomEventFunction = Actor->FindFunction(FName(TEXT("SetColor")));
-    int32 ColorValue = 3;
-    Actor->ProcessEvent(CustomEventFunction, &ColorValue);
+    SetColor(i, j, 3);
     if (i == (grid.Num() - 1))
     {
         //UE_LOG(LogTemp, Warning, TEXT("%d %d"), i, j);        
         return true;
     }
-    
+
     visited[i][j] = true;
     TArray<TArray<int32>> nei = {
         {FMath::Max(0, i - 1), j},
