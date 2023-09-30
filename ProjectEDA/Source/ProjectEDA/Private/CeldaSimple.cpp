@@ -30,36 +30,36 @@ void ACeldaSimple::SimularAsync(int32 n)
 {
     AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [=]()
         {
-            for (int i = 2; i < n; i++)
+            TArray<double> tValues;
+            for (int i = 2; i <= n; i++)
             {
                 InicializarSim(i);
-                double startSeconds = FPlatformTime::Seconds();
+                double t = FPlatformTime::Seconds();
                 while (!CortocircuitoSim()) {
                     int a = FMath::RandRange(0, i - 1);
                     int b = FMath::RandRange(0, i - 1);
                     RayoCosmicoSim(a, b);
                 }
-                double secondsElapsed = FPlatformTime::Seconds() - startSeconds;
-                UE_LOG(LogTemp, Warning, TEXT("%i iteration executed in %f seconds."), i, secondsElapsed);
+                t = FPlatformTime::Seconds() - t;
+                UE_LOG(LogTemp, Warning, TEXT("%i iteration executed in %f seconds."), i, t);
 
-                // Notify when one simulation is done (if needed)
-                if (i < n - 1)
-                {
-                    FGraphEventRef CompletionTask = FFunctionGraphTask::CreateAndDispatchWhenReady([&]()
-                        {
-                            OnSimulationCompleted(n);
-                        }, TStatId(), nullptr, ENamedThreads::GameThread);
-                }
+                tValues.Add(t);
             }
+            FString FilePath = FPaths::ProjectSavedDir() + TEXT("t_values.txt");
+            FString TextToSave;
+
+            for (double t : tValues)
+            {
+                TextToSave += FString::Printf(TEXT("%f\n"), t);
+            }
+            FFileHelper::SaveStringToFile(TextToSave, *FilePath);
+            //UE_LOG(LogTemp, Warning, TEXT("Saved t values to %s"), *FilePath);
+
+            FString AbsolutePath = FPaths::ConvertRelativePathToFull(FilePath);
+            FString DirectoryPath = FPaths::GetPath(AbsolutePath);
+            FPlatformProcess::ExploreFolder(*DirectoryPath);
         });
 }
-
-void ACeldaSimple::OnSimulationCompleted(int32 SimulationIndex)
-{
-    // Handle the completion of a simulation
-    UE_LOG(LogTemp, Warning, TEXT("Simulation %d completed."), SimulationIndex);
-}
-
 
 void ACeldaSimple::InicializarSim(int32 n)
 {
@@ -146,12 +146,18 @@ void ACeldaSimple::Inicializar(int32 n)
 {
     if (cubitosArray.Num() > 0) {
         for (int i = 0; i < cubitosArray.Num(); i++)
-        {
-            cubitosBordeArray[2 * i]->Destroy();
-            cubitosBordeArray[(2 * i) + 1]->Destroy();
+        {                        
+            if (cubitosBordeArray[2 * i]) {
+                cubitosBordeArray[2 * i]->Destroy();
+            }
+            if (cubitosBordeArray[(2 * i) + 1]) {
+                cubitosBordeArray[(2 * i) + 1]->Destroy();
+            }
             for (int j = 0; j < cubitosArray[0].Num(); j++)
             {
-                cubitosArray[i][j]->Destroy();
+                if (cubitosArray[i][j]) {
+                    cubitosArray[i][j]->Destroy();
+                }
             }
         }
     }
@@ -166,52 +172,54 @@ void ACeldaSimple::Inicializar(int32 n)
         {
             grid[i].Add(false);
             visited[i].Add(false);
-            cubitosArray[i][j] = SpawnCubito(i * space, j * space, 0, 1);
+            cubitosArray[i][j] = SpawnCubito(i * space, j * space, 0);
+            SetColor(cubitosArray[i][j], 1);
+            SetText(cubitosArray[i][j], FString::Printf(TEXT("(%d, %d)"), i, j));
         }
     }
 
     cubitosBordeArray.SetNum(2 * n);
     for (int i = 0; i < n; i++)
     {
-        cubitosBordeArray[2 * i] = SpawnCubito(-space, i * space, 0, 0);
-        cubitosBordeArray[(2 * i) + 1] = SpawnCubito(n * space, i * space, 0, 0);
+        cubitosBordeArray[2 * i] = SpawnCubito(-space, i * space, 0);
+        cubitosBordeArray[(2 * i) + 1] = SpawnCubito(n * space, i * space, 0);
+        SetColor(cubitosBordeArray[2 * i], 0);
+        SetColor(cubitosBordeArray[(2 * i) + 1], 0);
+
+        SetText(cubitosBordeArray[2 * i], FString::Printf(TEXT("")));
+        SetText(cubitosBordeArray[(2 * i) + 1], FString::Printf(TEXT("")));
     }
 }
 
-AActor* ACeldaSimple::SpawnCubito(float x, float y, float z, int32 ColorValue)
-{
-    if (CubitoBlueprint.IsValid())
-    {
-        UWorld* const World = GetWorld();
-        if (World)
-        {
-            FActorSpawnParameters SpawnParams;
-            SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-            UBlueprint* LoadedBlueprint = Cast<UBlueprint>(CubitoBlueprint.Get());
-
-            if (LoadedBlueprint)
-            {
-                UClass* CubitoClass = LoadedBlueprint->GeneratedClass;
-                AActor* SpawnedActor = World->SpawnActor<AActor>(CubitoClass, FVector(x, y, z), FRotator(0, 0, 0), SpawnParams);
-                
-                if (SpawnedActor)
-                {
-                    UFunction* CustomEventFunction = SpawnedActor->FindFunction(FName(TEXT("SetColor")));
-                    SpawnedActor->ProcessEvent(CustomEventFunction, &ColorValue);
-                    return SpawnedActor;
-                }
-            }
-        }
-    }
-    return nullptr;
+void ACeldaSimple::SetText(AActor* Actor, FString text) {
+    UFunction* CustomEventFunction = Actor->FindFunction("SetText");
+    Actor->ProcessEvent(CustomEventFunction, &text);
 }
 
-void ACeldaSimple::SetColor(int i, int j, int color) {
-    AActor* Actor = cubitosArray[i][j];
-    UFunction* CustomEventFunction = Actor->FindFunction(FName(TEXT("SetColor")));
-    int32 ColorValue = 2;
+void ACeldaSimple::SetColor(AActor* Actor, int32 color) {
+    UFunction* CustomEventFunction = Actor->FindFunction("SetColor");
     Actor->ProcessEvent(CustomEventFunction, &color);
+}
+
+AActor* ACeldaSimple::SpawnCubito(float x, float y, float z)
+{
+
+    UWorld* const World = GetWorld();
+    if (World)
+    {
+        FActorSpawnParameters SpawnParams;
+        SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+        AActor* SpawnedActor = World->SpawnActor<AActor>(CubitoBlueprint, FVector(x, y, z), FRotator(0, 0, 0), SpawnParams);
+
+        if (SpawnedActor)
+        {
+            return SpawnedActor;
+        }
+
+    }
+
+    return nullptr;
 }
 
 void ACeldaSimple::RayoCosmico(int32 i, int32 j)
@@ -220,8 +228,7 @@ void ACeldaSimple::RayoCosmico(int32 i, int32 j)
     if (!grid[i][j])
     {
         grid[i][j] = true;
-
-        SetColor(i, j, 2);
+        SetColor(cubitosArray[i][j], 2);
     }
     iterations++;
 }
@@ -229,7 +236,7 @@ void ACeldaSimple::RayoCosmico(int32 i, int32 j)
 bool ACeldaSimple::Helper(int32 i, int32 j)
 {
 
-    SetColor(i, j, 3);
+    SetColor(cubitosArray[i][j], 3);
     if (i == (grid.Num() - 1))
     {
         //UE_LOG(LogTemp, Warning, TEXT("%d %d"), i, j);        

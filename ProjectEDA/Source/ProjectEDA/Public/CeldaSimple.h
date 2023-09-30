@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "CeldaSimple.generated.h"
 
+
 UCLASS()
 class PROJECTEDA_API ACeldaSimple : public AActor
 {
@@ -20,7 +21,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "C++")
 		void Inicializar(int32 n);
 	UFUNCTION(BlueprintCallable, Category = "C++")
-		void RayoCosmico(int32 i, int32 j);	
+		void RayoCosmico(int32 i, int32 j);
 	UFUNCTION(BlueprintCallable, Category = "C++")
 		bool Cortocircuito();
 	UFUNCTION(BlueprintCallable, Category = "C++")
@@ -31,17 +32,17 @@ public:
 	TArray<TArray<AActor*>> cubitosArray;
 	TArray<AActor*> cubitosBordeArray;
 	int32 iterations;
-	AActor* SpawnCubito(float x, float y, float z, int32 ColorValue);
-	void SetColor(int i, int j, int color);
+	AActor* SpawnCubito(float x, float y, float z);
+	void SetColor(AActor* Actor, int32 color);
+	void SetText(AActor* Actor, FString text);
 	void InicializarSim(int32 n);
 	void RayoCosmicoSim(int32 i, int32 j);
 	bool CortocircuitoSim();
 	bool HelperSim(int32 i, int32 j);
 	void OnSimulationCompleted(int32 SimulationIndex);
-	//void RunSimulation(int32 n);
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cubito")
-		TSoftObjectPtr<class UBlueprint> CubitoBlueprint;
+	UPROPERTY(EditAnywhere, Category = "Cubito")
+		TSubclassOf<AActor> CubitoBlueprint;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cubito")
 		float space = 100;
 };
