@@ -146,18 +146,12 @@ void ACeldaSimple::Inicializar(int32 n)
 {
     if (cubitosArray.Num() > 0) {
         for (int i = 0; i < cubitosArray.Num(); i++)
-        {                        
-            if (cubitosBordeArray[2 * i]) {
-                cubitosBordeArray[2 * i]->Destroy();
-            }
-            if (cubitosBordeArray[(2 * i) + 1]) {
-                cubitosBordeArray[(2 * i) + 1]->Destroy();
-            }
+        {
+            cubitosBordeArray[2 * i]->Destroy();
+            cubitosBordeArray[(2 * i) + 1]->Destroy();
             for (int j = 0; j < cubitosArray[0].Num(); j++)
             {
-                if (cubitosArray[i][j]) {
-                    cubitosArray[i][j]->Destroy();
-                }
+                cubitosArray[i][j]->Destroy();
             }
         }
     }
@@ -235,7 +229,6 @@ void ACeldaSimple::RayoCosmico(int32 i, int32 j)
 
 bool ACeldaSimple::Helper(int32 i, int32 j)
 {
-
     SetColor(cubitosArray[i][j], 3);
     if (i == (grid.Num() - 1))
     {
