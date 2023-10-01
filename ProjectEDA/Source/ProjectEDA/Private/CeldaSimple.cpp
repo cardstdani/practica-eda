@@ -26,6 +26,10 @@ void ACeldaSimple::Tick(float DeltaTime)
 
 }
 
+void ACeldaSimple::SetSeed(int32 seed) {
+    stream = FRandomStream(seed);
+}
+
 void ACeldaSimple::SimularAsync(int32 n)
 {
     AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [=]()
@@ -36,9 +40,8 @@ void ACeldaSimple::SimularAsync(int32 n)
                 InicializarSim(i);
                 double t = FPlatformTime::Seconds();
                 while (!CortocircuitoSim()) {
-                    int a = FMath::RandRange(0, i - 1);
-                    int b = FMath::RandRange(0, i - 1);
-                    RayoCosmicoSim(a, b);
+                    
+                    RayoCosmicoSim(stream.RandRange(0, i - 1), stream.RandRange(0, i - 1));
                 }
                 t = FPlatformTime::Seconds() - t;
                 UE_LOG(LogTemp, Warning, TEXT("%i iteration executed in %f seconds."), i, t);
@@ -53,7 +56,6 @@ void ACeldaSimple::SimularAsync(int32 n)
                 TextToSave += FString::Printf(TEXT("%f\n"), t);
             }
             FFileHelper::SaveStringToFile(TextToSave, *FilePath);
-            //UE_LOG(LogTemp, Warning, TEXT("Saved t values to %s"), *FilePath);
 
             FString AbsolutePath = FPaths::ConvertRelativePathToFull(FilePath);
             FString DirectoryPath = FPaths::GetPath(AbsolutePath);
@@ -146,15 +148,22 @@ void ACeldaSimple::Inicializar(int32 n)
 {
     if (cubitosArray.Num() > 0) {
         for (int i = 0; i < cubitosArray.Num(); i++)
-        {
-            cubitosBordeArray[2 * i]->Destroy();
-            cubitosBordeArray[(2 * i) + 1]->Destroy();
+        {            
             for (int j = 0; j < cubitosArray[0].Num(); j++)
             {
                 cubitosArray[i][j]->Destroy();
             }
         }
     }
+    for (AActor* Actor : cubitosBordeArray)
+    {
+        if (Actor)
+        {
+            Actor->Destroy();
+        }
+    }
+    cubitosBordeArray.Empty();
+
     grid.Init(TArray<bool>(), n);
     visited.Init(TArray<bool>(), n);
     cubitosArray.SetNum(n);
@@ -175,13 +184,15 @@ void ACeldaSimple::Inicializar(int32 n)
     cubitosBordeArray.SetNum(2 * n);
     for (int i = 0; i < n; i++)
     {
-        cubitosBordeArray[2 * i] = SpawnCubito(-space, i * space, 0);
-        cubitosBordeArray[(2 * i) + 1] = SpawnCubito(n * space, i * space, 0);
-        SetColor(cubitosBordeArray[2 * i], 0);
-        SetColor(cubitosBordeArray[(2 * i) + 1], 0);
+        AActor* cubo1 = SpawnCubito(-space, i * space, 0);
+        AActor* cubo2 = SpawnCubito(n * space, i * space, 0);
+        cubitosBordeArray.Add(cubo1);
+        cubitosBordeArray.Add(cubo2);
+        SetColor(cubo1, 0);
+        SetColor(cubo2, 0);
 
-        SetText(cubitosBordeArray[2 * i], FString::Printf(TEXT("")));
-        SetText(cubitosBordeArray[(2 * i) + 1], FString::Printf(TEXT("")));
+        SetText(cubo1, FString::Printf(TEXT("")));
+        SetText(cubo2, FString::Printf(TEXT("")));
     }
 }
 

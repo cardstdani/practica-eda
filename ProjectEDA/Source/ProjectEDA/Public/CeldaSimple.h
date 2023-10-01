@@ -26,6 +26,8 @@ public:
 		bool Cortocircuito();
 	UFUNCTION(BlueprintCallable, Category = "C++")
 		void SimularAsync(int32 n);
+	UFUNCTION(BlueprintCallable, Category = "C++")
+		void SetSeed(int32 seed);
 	bool Helper(int32 i, int32 j);
 	TArray<TArray<bool>> grid;
 	TArray<TArray<bool>> visited;
@@ -36,10 +38,11 @@ public:
 	void SetColor(AActor* Actor, int32 color);
 	void SetText(AActor* Actor, FString text);
 	void InicializarSim(int32 n);
-	void RayoCosmicoSim(int32 i, int32 j);
+	void RayoCosmicoSim(int32 i, int32 j);	
 	bool CortocircuitoSim();
 	bool HelperSim(int32 i, int32 j);
 	void OnSimulationCompleted(int32 SimulationIndex);
+	FRandomStream stream;
 
 	UPROPERTY(EditAnywhere, Category = "Cubito")
 		TSubclassOf<AActor> CubitoBlueprint;
