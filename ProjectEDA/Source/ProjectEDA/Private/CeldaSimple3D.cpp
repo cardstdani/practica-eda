@@ -34,28 +34,23 @@ void ACeldaSimple3D::SimularAsync(int32 n)
 {
 	AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [=]()
 		{
-			TArray<double> tValues;
+			FString TextToSave;
 			for (int i = 2; i <= n; i++)
 			{
-				InicializarSim(i);
-				double t = FPlatformTime::Seconds();
-				while (!CortocircuitoSim()) {
-					RayoCosmicoSim(stream.RandRange(0, i - 1), stream.RandRange(0, i - 1), stream.RandRange(0, i - 1));
+				for (int j = 0; j <= 30; j++) {
+					InicializarSim(i);
+					double t = FPlatformTime::Seconds();
+					while (!CortocircuitoSim()) {
+						RayoCosmicoSim(stream.RandRange(0, i - 1), stream.RandRange(0, i - 1), stream.RandRange(0, i - 1));
+					}
+					t = FPlatformTime::Seconds() - t;
+					UE_LOG(LogTemp, Warning, TEXT("%i iteration executed in %f seconds."), i, t);
+					TextToSave += FString::Printf(TEXT("%i %f\n"), i, t);
 				}
-				t = FPlatformTime::Seconds() - t;
-				UE_LOG(LogTemp, Warning, TEXT("%i iteration executed in %f seconds."), i, t);
-
-				tValues.Add(t);
 			}
 			FString FilePath = FPaths::ProjectSavedDir() + TEXT("t_values3D.txt");
-			FString TextToSave;
 
-			for (double t : tValues)
-			{
-				TextToSave += FString::Printf(TEXT("%f\n"), t);
-			}
 			FFileHelper::SaveStringToFile(TextToSave, *FilePath);
-
 			FString AbsolutePath = FPaths::ConvertRelativePathToFull(FilePath);
 			FString DirectoryPath = FPaths::GetPath(AbsolutePath);
 			FPlatformProcess::ExploreFolder(*DirectoryPath);

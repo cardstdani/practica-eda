@@ -30,7 +30,6 @@ public class CeldaSimple implements Celda {
 
 	private boolean helper(int i, int j) {
 		if (i == (grid.length - 1)) {
-			System.out.println(i + " " + j);
 			return true;
 		}
 		visited[i][j] = true;
