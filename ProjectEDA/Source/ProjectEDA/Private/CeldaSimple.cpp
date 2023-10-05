@@ -37,7 +37,7 @@ void ACeldaSimple::SimularAsync(int32 n)
             FString TextToSave;
             for (int i = 2; i <= n; i++)
             {
-                for (int j = 0; j <= 30; j++) {
+                for (int j = 0; j <= i; j++) {
                     InicializarSim(i);
                     double t = FPlatformTime::Seconds();
                     while (!CortocircuitoSim()) {
