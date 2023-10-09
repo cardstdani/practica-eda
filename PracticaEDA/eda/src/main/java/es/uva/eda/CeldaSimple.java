@@ -1,18 +1,15 @@
 package es.uva.eda;
 
-import java.util.Arrays;
-import com.aparapi.*;
-
 public class CeldaSimple implements Celda {
 	private boolean[][] grid;
 	private boolean[][] visited;
 	private boolean cortocircuito;
-	private int iterations = 0;
 
 	@Override
 	public void Inicializar(int n) {
 		grid = new boolean[n][n];
 		visited = new boolean[n][n];
+		cortocircuito = false;
 
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < n; j++) {
@@ -33,7 +30,6 @@ public class CeldaSimple implements Celda {
 			}
 			cortocircuito = helper(i, j, 0) & helper(i, j, 1);
 		}
-		iterations++;
 	}
 
 	private boolean helper(int i, int j, int up) {
