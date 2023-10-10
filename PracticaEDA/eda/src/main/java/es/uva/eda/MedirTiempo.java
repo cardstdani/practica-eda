@@ -11,7 +11,7 @@ public class MedirTiempo {
 		ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()); // Create a
 																												// thread
 																												// pool
-		for (int n = 2; n < 500; n++) {
+		for (int n = 2; n < 1000; n += 5) {
 			List<Future<Void>> futures = new ArrayList<>(); // List to hold future results
 			for (int k = 0; k < n; k++) {
 				final int finalN = n;
@@ -21,9 +21,9 @@ public class MedirTiempo {
 					celda.Inicializar(finalN);
 
 					long t = System.nanoTime();
-					while (!celda.Cortocircuito()) { //n*n
+					while (!celda.Cortocircuito()) { // n*n
 						celda.RayoCosmico(rnd.nextInt(finalN), rnd.nextInt(finalN));
-						//2*n*n
+						// 2*n*n
 					}
 					long t2 = System.nanoTime();
 
