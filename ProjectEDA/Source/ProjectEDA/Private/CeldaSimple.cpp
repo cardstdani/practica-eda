@@ -191,9 +191,64 @@ bool ACeldaSimple::CortocircuitoSim()
     }
 }*/
 
-void ACeldaSimple::Inicializar(int32 n)
-{
-    if (cubitosArray.Num() > 0) {
+void ACeldaSimple::Inicializar(int32 n) {
+    int previousN = cubitosArray.Num();
+    grid.Init(TArray<bool>(), n);
+    visited.Init(TArray<bool>(), n);
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            grid[i].Add(false);
+            visited[i].Add(false);
+        }
+    }
+
+    if (previousN > n) {
+        // Shrinking the grid
+        for (int i = 0; i < previousN; i++) {
+            for (int j = 0; j < previousN; j++) {
+                if (i >= n || j >= n) {
+                    if (cubitosArray[i][j]) {
+                        cubitosArray[i][j]->Destroy();
+                        cubitosArray[i][j] = nullptr;
+                    }
+                }
+            }
+            if (i >= n) {
+                cubitosArray[i].Empty();  // Empty the array row if it's outside the new grid dimensions
+            }
+            else {
+                cubitosArray[i].SetNum(n);  // Otherwise, resize the array row to the new grid size
+            }
+        }
+        cubitosArray.SetNum(n);  // Resize the main array to the new grid size
+    }
+    else if (previousN < n) {
+        // Expanding the grid
+        cubitosArray.SetNum(n);
+        for (int i = 0; i < n; i++) {
+            if (i >= previousN) {
+                // Spawn new rows
+                cubitosArray[i].SetNum(n);
+                for (int j = 0; j < n; j++) {
+                    cubitosArray[i][j] = SpawnCubito(i * space, j * space, 0);
+                    SetColor(cubitosArray[i][j], 1);
+                    SetText(cubitosArray[i][j], FString::Printf(TEXT("(%d, %d)"), i, j));
+                }
+            }
+            else {
+                // Spawn new columns in existing rows
+                cubitosArray[i].SetNum(n);
+                for (int j = previousN; j < n; j++) {
+                    cubitosArray[i][j] = SpawnCubito(i * space, j * space, 0);
+                    SetColor(cubitosArray[i][j], 1);
+                    SetText(cubitosArray[i][j], FString::Printf(TEXT("(%d, %d)"), i, j));
+                }
+            }
+        }
+    }
+    else {
         for (int i = 0; i < cubitosArray.Num(); i++)
         {
             for (int j = 0; j < cubitosArray[0].Num(); j++)
@@ -201,7 +256,23 @@ void ACeldaSimple::Inicializar(int32 n)
                 cubitosArray[i][j]->Destroy();
             }
         }
+
+        cubitosArray.SetNum(n);
+        for (int i = 0; i < n; i++)
+        {
+            cubitosArray[i].SetNum(n);
+            for (int j = 0; j < n; j++)
+            {
+                grid[i].Add(false);
+                visited[i].Add(false);
+                cubitosArray[i][j] = SpawnCubito(i * space, j * space, 0);
+                SetColor(cubitosArray[i][j], 1);
+                SetText(cubitosArray[i][j], FString::Printf(TEXT("(%d, %d)"), i, j));
+            }
+        }
     }
+
+    //BORDE
     for (AActor* Actor : cubitosBordeArray)
     {
         if (Actor)
@@ -210,23 +281,6 @@ void ACeldaSimple::Inicializar(int32 n)
         }
     }
     cubitosBordeArray.Empty();
-
-    grid.Init(TArray<bool>(), n);
-    visited.Init(TArray<bool>(), n);
-    cubitosArray.SetNum(n);
-
-    for (int i = 0; i < n; i++)
-    {
-        cubitosArray[i].SetNum(n);
-        for (int j = 0; j < n; j++)
-        {
-            grid[i].Add(false);
-            visited[i].Add(false);
-            cubitosArray[i][j] = SpawnCubito(i * space, j * space, 0);
-            SetColor(cubitosArray[i][j], 1);
-            SetText(cubitosArray[i][j], FString::Printf(TEXT("(%d, %d)"), i, j));
-        }
-    }
 
     cubitosBordeArray.SetNum(2 * n);
     for (int i = 0; i < n; i++)
