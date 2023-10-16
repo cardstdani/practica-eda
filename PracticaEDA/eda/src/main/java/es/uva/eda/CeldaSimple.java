@@ -20,18 +20,20 @@ public class CeldaSimple implements Celda {
 
 	@Override
 	public void RayoCosmico(int i, int j) {
-		if (!grid[i][j]) {
+		//f(x)=n^2 (1-(1 - 1/n^2)^x) Numero estimado de atomos cambiados en iteracion x
+		if (!grid[i][j]) { //P(x)=(1-(1/n^2))^x probabilidad de entrar en esta condición = n^2-f(x) / n^2
 			grid[i][j] = true;
 
-			for (int a = 0; a < grid.length; a++) {
+			for (int a = 0; a < grid.length; a++) { //O(n^2)
 				for (int b = 0; b < grid[0].length; b++) {
 					visited[a][b] = false;
 				}
 			}
-			cortocircuito = helper(i, j, 0) & helper(i, j, 1);
-		}
+			cortocircuito = helper(i, j, 0) & helper(i, j, 1); //O(n^2) (peor caso)
+		}		
 	}
 
+	//Complejidad T(i, j, x)=(1-P(x)) (T(i, j-1)+T(i, j+1)+T(i-1, j)+T(i-1, j-1)+T(i-1, j+1)) + O(1)
 	private boolean helper(int i, int j, int up) {
 		visited[i][j] = true;
 		int[][] nei;

@@ -21,9 +21,9 @@ public class MedirTiempo {
 					celda.Inicializar(finalN);
 
 					long t = System.nanoTime();
-					while (!celda.Cortocircuito()) { // n*n
-						celda.RayoCosmico(rnd.nextInt(finalN), rnd.nextInt(finalN));
-						// 2*n*n
+					// C(n^2, f(x)) numero total de combinaciones de f(x) atomos cambiados
+					while (!celda.Cortocircuito()) { 
+						celda.RayoCosmico(rnd.nextInt(finalN), rnd.nextInt(finalN)); //Peor caso O(n^2)					
 					}
 					long t2 = System.nanoTime();
 
