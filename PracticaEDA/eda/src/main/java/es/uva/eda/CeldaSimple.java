@@ -3,8 +3,8 @@ package es.uva.eda;
 public class CeldaSimple implements Celda {
 	private boolean[][] grid;
 	private boolean[][] visited;
-	private int[][] neiUp = new int[][] { { -1, -1 }, { -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 } };
-	private int[][] neiDown = new int[][] { { 1, -1 }, { 1, 0 }, { 1, 1 }, { 0, -1 }, { 0, 1 } };
+	private int[][] neiUp = new int[][] { { -1, 0 }, { -1, -1 }, { -1, 1 }, { 0, -1 }, { 0, 1 } };
+	private int[][] neiDown = new int[][] { { 1, 0 }, { 1, -1 }, { 1, 1 }, { 0, -1 }, { 0, 1 } };
 	private boolean cortocircuito;
 
 	@Override
