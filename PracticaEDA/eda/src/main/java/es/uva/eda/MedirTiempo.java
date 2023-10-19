@@ -7,11 +7,11 @@ import java.util.concurrent.*;
 public class MedirTiempo {
 	public static void main(String[] args) {
 		Random rnd = new Random();
-		ExecutorService executor = Executors.newCachedThreadPool();
+		ExecutorService executor = Executors.newScheduledThreadPool(256);
 
-		for (int n = 2; n < 1000; n += 5) {
+		for (int n = 2; n < 1000; n += (int) (Math.log(n) / Math.log(1.7f))) {
 			List<Future<Void>> futures = new ArrayList<>(); // List to hold future results
-			for (int k = 0; k < (n/2); k++) {
+			for (int k = 0; k < (n / 2); k++) {
 				final int finalN = n;
 
 				// Submit tasks to the executor
@@ -26,13 +26,9 @@ public class MedirTiempo {
 					}
 					long t2 = System.nanoTime();
 
-					try (BufferedWriter bw = new BufferedWriter(new FileWriter("t_values.txt", true))) {
-						bw.write(finalN + " " + (t2 - t));
-						bw.newLine();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-
+					BufferedWriter bw = new BufferedWriter(new FileWriter("t_values.txt", true));
+					bw.write(finalN + " " + (t2 - t) + "\n");
+					bw.close();
 					System.out.println(finalN + " " + (t2 - t));
 					return null;
 				});
@@ -49,6 +45,5 @@ public class MedirTiempo {
 		}
 
 		executor.shutdown();
-
 	}
 }
