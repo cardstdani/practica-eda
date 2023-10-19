@@ -5,17 +5,17 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class MedirTiempo {
-	public static void main(String[] args) {
-		Random rnd = new Random();
-		ExecutorService executor = Executors.newScheduledThreadPool(256);
+	public static void main(String[] args) throws InterruptedException, ExecutionException {
+		ExecutorService executor = Executors.newFixedThreadPool(24);
 
-		for (int n = 2; n < 1000; n += (int) (Math.log(n) / Math.log(1.7f))) {
+		for (int n = 2; n < 1000; n += 4) {
 			List<Future<Void>> futures = new ArrayList<>(); // List to hold future results
-			for (int k = 0; k < (n / 2); k++) {
+			for (int k = 0; k < (n / 1); k++) {
 				final int finalN = n;
 
 				// Submit tasks to the executor
 				Future<Void> future = executor.submit(() -> {
+					Random rnd = new Random();
 					Celda celda = new CeldaSimple();
 					celda.Inicializar(finalN);
 
@@ -36,11 +36,7 @@ public class MedirTiempo {
 			}
 
 			for (Future<Void> future : futures) {
-				try {
-					future.get();
-				} catch (InterruptedException | ExecutionException e) {
-					e.printStackTrace();
-				}
+				future.get();
 			}
 		}
 
