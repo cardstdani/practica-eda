@@ -32,10 +32,8 @@ public class CeldaSimple implements Celda {
 				}
 			}
 			cortocircuito = helper(i, j, 0);
-			for (int a = 0; a < grid.length; a++) { // O(n^2)
-				for (int b = 0; b < grid[0].length; b++) {
-					visited[a][b] = false;
-				}
+			for (int b = 0; b < grid[0].length; b++) {
+				visited[i][b] = false;
 			}
 			cortocircuito = cortocircuito && helper(i, j, 1);
 		}
@@ -44,17 +42,18 @@ public class CeldaSimple implements Celda {
 	// Complejidad T(i, j, x)=(1-P(x)) (T(i, j-1)+T(i, j+1)+T(i-1, j)+T(i-1,
 	// j-1)+T(i-1, j+1)) + O(1)
 	private boolean helper(int i, int j, int up) {
-		if (i < 0 || j < 0 || i >= grid.length || j >= grid[0].length || !grid[i][j] || visited[i][j]) {
-			return false;
-		}
 		visited[i][j] = true;
 		if (up == 0) {
 			if (i == (grid.length - 1)) {
 				return true;
 			}
 
+			int newI = 0, newJ = 0;
 			for (int k = 0; k < neiDown.length; k++) {
-				if (helper(neiDown[k][0] + i, neiDown[k][1] + j, up)) {
+				newI = neiDown[k][0] + i;
+				newJ = neiDown[k][1] + j;
+				if (newI >= 0 && newJ >= 0 && newI < grid.length && newJ < grid[0].length && grid[newI][newJ]
+						&& !visited[newI][newJ] && helper(newI, newJ, up)) {
 					return true;
 				}
 			}
@@ -64,8 +63,12 @@ public class CeldaSimple implements Celda {
 				return true;
 			}
 
+			int newI = 0, newJ = 0;
 			for (int k = 0; k < neiUp.length; k++) {
-				if (helper(neiUp[k][0] + i, neiUp[k][1] + j, up)) {
+				newI = neiUp[k][0] + i;
+				newJ = neiUp[k][1] + j;
+				if (newI >= 0 && newJ >= 0 && newI < grid.length && newJ < grid[0].length && grid[newI][newJ]
+						&& !visited[newI][newJ] && helper(newI, newJ, up)) {
 					return true;
 				}
 			}

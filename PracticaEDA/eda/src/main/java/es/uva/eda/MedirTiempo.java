@@ -15,14 +15,15 @@ public class MedirTiempo {
 
 				// Submit tasks to the executor
 				Future<Void> future = executor.submit(() -> {
-					Random rnd = new Random();
+					// Random rnd = new Random();
 					Celda celda = new CeldaSimple();
 					celda.Inicializar(finalN);
 
 					long t = System.nanoTime();
 					// C(n^2, f(x)) numero total de combinaciones de f(x) atomos cambiados
 					while (!celda.Cortocircuito()) {
-						celda.RayoCosmico(rnd.nextInt(finalN), rnd.nextInt(finalN)); // Peor caso O(n^2)
+						celda.RayoCosmico(ThreadLocalRandom.current().nextInt(finalN),
+								ThreadLocalRandom.current().nextInt(finalN)); // Peor caso O(n^2)
 					}
 					long t2 = System.nanoTime();
 
