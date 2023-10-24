@@ -5,39 +5,64 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class MedirTiempo {
-	public static void main(String[] args) throws InterruptedException, ExecutionException {
+	public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
+		Random rnd;
+		Celda celda = new CeldaSimple();
+		long t = 0;
+		BufferedWriter bw = new BufferedWriter(new FileWriter("t_values.txt", true));
+		for (int n = 2; n < 400; n += 4) {
+			for (int k = 0; k < n; k++) {
+				rnd = new Random();
+				celda.Inicializar(n);
+
+				t = System.nanoTime();
+				while (!celda.Cortocircuito()) {
+					celda.RayoCosmico(rnd.nextInt(n), rnd.nextInt(n));
+				}
+				t = System.nanoTime() - t;
+				bw.write(n + " " + t + "\n");
+				System.out.println(n + " " + t);
+			}
+		}
+		bw.close();
+	}
+}
+
+class PruebaMultiThreading {
+	public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
 		ExecutorService executor = Executors.newFixedThreadPool(24);
+		ConcurrentLinkedQueue<String> results = new ConcurrentLinkedQueue<>(); // A thread-safe data structure to store
+																				// results
 
-		for (int n = 2; n < 1000; n += 4) {
-			List<Future<Void>> futures = new ArrayList<>(); // List to hold future results
-			for (int k = 0; k < (n / 1); k++) {
-				final int finalN = n;
-
-				// Submit tasks to the executor
-				Future<Void> future = executor.submit(() -> {
-					// Random rnd = new Random();
+		for (int n = 2; n < 300; n += 4) {
+			List<Callable<Void>> tasks = new ArrayList<>(); // List to hold tasks
+			int finalN = n;
+			for (int k = 0; k < n; k++) {
+				tasks.add(() -> {
 					Celda celda = new CeldaSimple();
 					celda.Inicializar(finalN);
 
 					long t = System.nanoTime();
-					// C(n^2, f(x)) numero total de combinaciones de f(x) atomos cambiados
 					while (!celda.Cortocircuito()) {
 						celda.RayoCosmico(ThreadLocalRandom.current().nextInt(finalN),
-								ThreadLocalRandom.current().nextInt(finalN)); // Peor caso O(n^2)
+								ThreadLocalRandom.current().nextInt(finalN));
 					}
 					long t2 = System.nanoTime();
 
-					BufferedWriter bw = new BufferedWriter(new FileWriter("t_values.txt", true));
-					bw.write(finalN + " " + (t2 - t) + "\n");
-					bw.close();
-					System.out.println(finalN + " " + (t2 - t));
+					String result = finalN + " " + (t2 - t);
+					results.add(result);
+					System.out.println(result);
 					return null;
 				});
-				futures.add(future);
 			}
 
-			for (Future<Void> future : futures) {
-				future.get();
+			executor.invokeAll(tasks); // This will wait for all tasks to complete
+		}
+
+		// Write to the file once all tasks are done
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter("t_values.txt", true))) {
+			for (String result : results) {
+				bw.write(result + "\n");
 			}
 		}
 
