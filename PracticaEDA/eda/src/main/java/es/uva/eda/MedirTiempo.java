@@ -10,7 +10,7 @@ public class MedirTiempo {
 		Celda celda = new CeldaSimple();
 		long t = 0;
 		BufferedWriter bw = new BufferedWriter(new FileWriter("t_values.txt", true));
-		for (int n = 2; n < 400; n += 4) {
+		for (int n = 502; n < 600; n += 4) {
 			for (int k = 0; k < n; k++) {
 				rnd = new Random();
 				celda.Inicializar(n);
@@ -23,6 +23,7 @@ public class MedirTiempo {
 				bw.write(n + " " + t + "\n");
 				System.out.println(n + " " + t);
 			}
+			System.gc();
 		}
 		bw.close();
 	}
