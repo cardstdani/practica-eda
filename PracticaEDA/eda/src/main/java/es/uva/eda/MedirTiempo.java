@@ -10,8 +10,8 @@ public class MedirTiempo {
 		Celda celda = new CeldaSimple();
 		long t = 0;
 		BufferedWriter bw = new BufferedWriter(new FileWriter("t_values.txt", true));
-		for (int n = 502; n < 600; n += 4) {
-			for (int k = 0; k < n; k++) {
+		for (int n = 670; n < 700; n += 4) {
+			for (int k = 0; k < n/2; k++) {
 				rnd = new Random();
 				celda.Inicializar(n);
 

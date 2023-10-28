@@ -23,7 +23,7 @@ public class CeldaSimple implements Celda {
 	@Override
 	public void RayoCosmico(int i, int j) {
 		// B(x)=n^2 (1-(1 - 1/n^2)^x) Numero estimado de atomos cambiados en iteracion x
-		if (!grid[i][j]) { // P(x)=(1-(1/n^2))^x probabilidad de entrar en esta condición = n^2-f(x) / n^2
+		if (!grid[i][j]) { // P(x)=(1-(1/n^2))^x probabilidad de entrar en esta condición
 			grid[i][j] = true;
 
 			for (int a = 0; a < grid.length; a++) { // O(n^2)
