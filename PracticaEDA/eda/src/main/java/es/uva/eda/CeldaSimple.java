@@ -1,5 +1,9 @@
 package es.uva.eda;
 
+/**
+ * Para más detalles, visitar el github: https://github.com/cardstdani/practica-eda
+ * @author Daniel García Solla
+ */
 public class CeldaSimple implements Celda {
 	private boolean[][] grid;
 	private boolean[][] visited;
@@ -7,6 +11,11 @@ public class CeldaSimple implements Celda {
 	private int[][] neiDown = new int[][] { { 1, 0 }, { 1, -1 }, { 1, 1 }, { 0, -1 }, { 0, 1 } };
 	private boolean cortocircuito;
 
+	/**
+	 * Inicializa la cuadrícula con un tamaño específico.
+	 * 
+	 * @param n El tamaño de la cuadrícula (n x n).
+	 */
 	@Override
 	public void Inicializar(int n) {
 		grid = new boolean[n][n];
@@ -20,6 +29,14 @@ public class CeldaSimple implements Celda {
 		}
 	}
 
+	/**
+	 * Aplica un rayo cósmico en una posición específica de la cuadrícula. Si la
+	 * celda en la posición (i, j) está desactivada, la activa y verifica si hay un
+	 * cortocircuito.
+	 * 
+	 * @param i Índice de la fila.
+	 * @param j Índice de la columna.
+	 */
 	@Override
 	public void RayoCosmico(int i, int j) {
 		// B(x)=n^2 (1-(1 - 1/n^2)^x) Numero estimado de atomos cambiados en iteracion x
@@ -39,8 +56,17 @@ public class CeldaSimple implements Celda {
 		}
 	}
 
-	// Complejidad T(i, j, x)=(1-P(x)) (T(i, j-1)+T(i, j+1)+T(i-1, j)+T(i-1,
-	// j-1)+T(i-1, j+1)) + O(1)
+	/**
+	 * Método auxiliar para verificar si hay un cortocircuito desde una celda
+	 * específica. (Bastante tenebroso de analizar analíticamente, por favor no
+	 * intentar en casa) Utiliza búsqueda en profundidad para verificar si hay un
+	 * camino desde la celda (i, j) hasta el borde opuesto.
+	 * 
+	 * @param i  Índice de la fila.
+	 * @param j  Índice de la columna.
+	 * @param up Dirección de la búsqueda (0 para abajo, 1 para arriba).
+	 * @return true si hay un cortocircuito, false en caso contrario.
+	 */
 	private boolean helper(int i, int j, int up) {
 		visited[i][j] = true;
 		if (up == 0) {
@@ -76,11 +102,21 @@ public class CeldaSimple implements Celda {
 		return false;
 	}
 
+	/**
+	 * Verifica si hay un cortocircuito en la cuadrícula.
+	 * 
+	 * @return true si hay un cortocircuito, false en caso contrario.
+	 */
 	@Override
 	public boolean Cortocircuito() {
 		return cortocircuito;
 	}
 
+	/**
+	 * Devuelve un string con la cuadrícula.
+	 * 
+	 * @return Una cadena de texto representando el estado actual de la cuadrícula.
+	 */
 	@Override
 	public String toString() {
 		String out = "";
