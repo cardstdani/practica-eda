@@ -58,8 +58,7 @@ public class CeldaSimple implements Celda {
 
 	/**
 	 * Método auxiliar para verificar si hay un cortocircuito desde una celda
-	 * específica. (Bastante tenebroso de analizar analíticamente, por favor no
-	 * intentar en casa) Utiliza búsqueda en profundidad para verificar si hay un
+	 * específica. Utiliza búsqueda en profundidad para verificar si hay un
 	 * camino desde la celda (i, j) hasta el borde opuesto.
 	 * 
 	 * @param i  Índice de la fila.
