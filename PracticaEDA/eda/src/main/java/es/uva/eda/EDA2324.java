@@ -26,7 +26,7 @@ public class EDA2324 {
 			System.out.print("Repeticiones = ");
 			num_rep = teclado.nextInt();
 		}
-		Celda celda = new CeldaSimple();
+		Celda celda = new CeldaAvanzada();
 		long tpo_total = 0;
 		int num_rayos = 0;
 		for (int k = 0; k < num_rep; k++) {
