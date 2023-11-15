@@ -7,11 +7,11 @@ import java.util.concurrent.*;
 public class MedirTiempo {
 	public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
 		Random rnd;
-		Celda celda = new CeldaSimple();
+		Celda celda = new CeldaAvanzada();
 		long t = 0;
 		BufferedWriter bw = new BufferedWriter(new FileWriter("t_values.txt", true));
 		for (int n = 2; n < 800; n += 4) {
-			for (int k = 0; k < n; k++) {
+			for (int k = 0; k < 150; k++) {
 				rnd = new Random();
 				celda.Inicializar(n);
 

@@ -26,6 +26,7 @@ public class EDA2324 {
 			System.out.print("Repeticiones = ");
 			num_rep = teclado.nextInt();
 		}
+		//Celda celda = new CeldaSimpleReferencia();
 		Celda celda = new CeldaAvanzada();
 		long tpo_total = 0;
 		int num_rayos = 0;
@@ -47,7 +48,7 @@ public class EDA2324 {
 		System.out.printf("\nTiempo medio = %.5f\n", 1e-9 * tpo_total / num_rep);
 		if (validar) {
 			System.out.println("Número de rayos = " + num_rayos);
-			System.out.println(celda);
+			//System.out.println(celda);
 		}
 	}
 }

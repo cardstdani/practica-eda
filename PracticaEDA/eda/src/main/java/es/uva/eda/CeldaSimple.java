@@ -1,14 +1,16 @@
 package es.uva.eda;
 
 /**
- * Para más detalles, visitar el github: https://github.com/cardstdani/practica-eda
+ * Para más detalles, visitar el github:
+ * https://github.com/cardstdani/practica-eda
+ * 
  * @author Daniel García Solla
  */
 public class CeldaSimple implements Celda {
 	private boolean[][] grid;
 	private boolean[][] visited;
-	private int[][] neiUp = new int[][] { { -1, 0 }, { -1, -1 }, { -1, 1 }, { 0, -1 }, { 0, 1 } };
-	private int[][] neiDown = new int[][] { { 1, 0 }, { 1, -1 }, { 1, 1 }, { 0, -1 }, { 0, 1 } };
+	private int[][] nei = new int[][] { { -1, -1 }, { -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 }, { 1, -1 }, { 1, 0 },
+			{ 1, 1 } };
 	private boolean cortocircuito;
 
 	/**
@@ -49,17 +51,19 @@ public class CeldaSimple implements Celda {
 				}
 			}
 			cortocircuito = helper(i, j, 0);
-			for (int b = 0; b < grid[0].length; b++) {
-				visited[i][b] = false;
+			for (int a = 0; a < grid.length; a++) { // O(n^2)
+				for (int b = 0; b < grid[0].length; b++) {
+					visited[a][b] = false;
+				}
 			}
-			cortocircuito = cortocircuito && helper(i, j, 1);
+			cortocircuito = cortocircuito && helper(i, j, grid.length - 1);
 		}
 	}
 
 	/**
 	 * Método auxiliar para verificar si hay un cortocircuito desde una celda
-	 * específica. Utiliza búsqueda en profundidad para verificar si hay un
-	 * camino desde la celda (i, j) hasta el borde opuesto.
+	 * específica. Utiliza búsqueda en profundidad para verificar si hay un camino
+	 * desde la celda (i, j) hasta el borde opuesto.
 	 * 
 	 * @param i  Índice de la fila.
 	 * @param j  Índice de la columna.
@@ -67,37 +71,21 @@ public class CeldaSimple implements Celda {
 	 * @return true si hay un cortocircuito, false en caso contrario.
 	 */
 	private boolean helper(int i, int j, int up) {
+		if (i == up) {
+			return true;
+		}
 		visited[i][j] = true;
-		if (up == 0) {
-			if (i == (grid.length - 1)) {
+
+		int newI = 0, newJ = 0;
+		for (int k = 0; k < nei.length; k++) {
+			newI = nei[k][0] + i;
+			newJ = nei[k][1] + j;
+			if (newI >= 0 && newJ >= 0 && newI < grid.length && newJ < grid[0].length && grid[newI][newJ]
+					&& !visited[newI][newJ] && helper(newI, newJ, up)) {
 				return true;
-			}
-
-			int newI = 0, newJ = 0;
-			for (int k = 0; k < neiDown.length; k++) {
-				newI = neiDown[k][0] + i;
-				newJ = neiDown[k][1] + j;
-				if (newI >= 0 && newJ >= 0 && newI < grid.length && newJ < grid[0].length && grid[newI][newJ]
-						&& !visited[newI][newJ] && helper(newI, newJ, up)) {
-					return true;
-				}
-			}
-
-		} else {
-			if (i == 0) {
-				return true;
-			}
-
-			int newI = 0, newJ = 0;
-			for (int k = 0; k < neiUp.length; k++) {
-				newI = neiUp[k][0] + i;
-				newJ = neiUp[k][1] + j;
-				if (newI >= 0 && newJ >= 0 && newI < grid.length && newJ < grid[0].length && grid[newI][newJ]
-						&& !visited[newI][newJ] && helper(newI, newJ, up)) {
-					return true;
-				}
 			}
 		}
+
 		return false;
 	}
 
