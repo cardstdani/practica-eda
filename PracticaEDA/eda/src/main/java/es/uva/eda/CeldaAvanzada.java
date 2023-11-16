@@ -1,33 +1,28 @@
 package es.uva.eda;
 
 public class CeldaAvanzada implements Celda {
-	private boolean[][] grid;
-	private int[][] nei = new int[][] { { -1, 0 }, { 1, 0 }, { 1, -1 }, { 1, 1 }, { -1, -1 }, { -1, 1 }, { 0, -1 },
-			{ 0, 1 } };
+	private boolean[] grid;
+	private int[] nei;
 	private boolean cortocircuito;
-	private int n;
+	private int n, n2;
+	private int cellIndex;
 
 	// Disjoint Set
 	private int[] parent;
 	private int[] rank;
 
 	public int find(int item) {
-		int root = item;
-		while (root != parent[root]) {
-			root = parent[root];
+		while (item != parent[item]) {
+			parent[item] = parent[parent[item]];
+			item = parent[item];
 		}
-		// Compress the path
-		while (item != root) {
-			int next = parent[item];
-			parent[item] = root;
-			item = next;
-		}
-		return root;
+		return item;
 	}
 
 	public void union(int item1, int item2) {
 		int root1 = find(item1);
 		int root2 = find(item2);
+		// System.out.println(root1 + " " + root2);
 		if (root1 != root2) {
 			if (rank[root1] < rank[root2]) {
 				parent[root1] = root2;
@@ -48,11 +43,12 @@ public class CeldaAvanzada implements Celda {
 	@Override
 	public void Inicializar(int n) {
 		this.n = n;
-		grid = new boolean[n][n];
+		this.n2 = n * n;
+		grid = new boolean[n * n];
 		cortocircuito = false;
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < n; j++) {
-				grid[i][j] = false;
+				grid[i * n + j] = false;
 			}
 		}
 
@@ -63,6 +59,7 @@ public class CeldaAvanzada implements Celda {
 			parent[i] = i;
 			rank[i] = 0;
 		}
+		nei = new int[] { -n, n, n - 1, n + 1, -n - 1, -n + 1, -1, 1 };
 	}
 
 	/**
@@ -75,25 +72,21 @@ public class CeldaAvanzada implements Celda {
 	 */
 	@Override
 	public void RayoCosmico(int i, int j) {
-		if (!grid[i][j]) {
-			grid[i][j] = true;
-			int cellIndex = i * n + j;
+		cellIndex = i * n + j;
+		if (!grid[cellIndex]) {
+			grid[cellIndex] = true;
 
 			if (i == 0) {
-				union(cellIndex, n * n); // Connect to virtual top node
+				union(cellIndex, n2); // Connect to virtual top node
 			} else if (i == n - 1) {
-				union(cellIndex, n * n + 1); // Connect to virtual bottom node
+				union(cellIndex, n2 + 1); // Connect to virtual bottom node
 			}
 
-			for (int[] k : nei) {
-				int newI = i + k[0];
-				int newJ = j + k[1];
-				if (newI >= 0 && newJ >= 0 && newI < n && newJ < n && grid[newI][newJ]) {
-					union(cellIndex, newI * n + newJ);
+			for (int k : nei) {
+				if (cellIndex + k >= 0 && cellIndex + k < n2 && grid[cellIndex + k]) {
+					union(cellIndex, cellIndex + k);
 				}
 			}
-
-			cortocircuito = find(n * n) == find(n * n + 1);
 		}
 	}
 
@@ -104,7 +97,7 @@ public class CeldaAvanzada implements Celda {
 	 */
 	@Override
 	public boolean Cortocircuito() {
-		return cortocircuito;
+		return find(n2) == find(n2 + 1);
 	}
 
 	/**
@@ -116,13 +109,11 @@ public class CeldaAvanzada implements Celda {
 	public String toString() {
 		String out = "";
 
-		for (int i = 0; i < grid.length; i++) {
-			for (int j = 0; j < grid[0].length; j++) {
-				out += grid[i][j] ? "X" : ".";
-				out += (j < grid[0].length - 1) ? " " : "";
-			}
-			out += "\n";
-		}
+		/*
+		 * for (int i = 0; i < grid.length; i++) { for (int j = 0; j < grid[0].length;
+		 * j++) { out += grid[i][j] ? "X" : "."; out += (j < grid[0].length - 1) ? " " :
+		 * ""; } out += "\n"; }
+		 */
 
 		return out;
 	}
