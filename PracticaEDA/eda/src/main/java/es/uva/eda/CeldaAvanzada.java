@@ -29,8 +29,8 @@ public class CeldaAvanzada implements Celda {
 			} else if (rank[root1] > rank[root2]) {
 				parent[root2] = root1;
 			} else {
-				parent[root2] = root1;
-				rank[root1]++;
+				parent[root1] = root2;
+				rank[root2]++;
 			}
 		}
 	}
