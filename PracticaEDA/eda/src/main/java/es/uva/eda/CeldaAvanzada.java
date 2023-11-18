@@ -4,7 +4,7 @@ public class CeldaAvanzada implements Celda {
 	private boolean[] grid;
 	private int[] nei;
 	private boolean cortocircuito;
-	private int n, n2;
+	private int n, n2, root1, root2;
 	private int cellIndex;
 
 	// Disjoint Set
@@ -20,8 +20,8 @@ public class CeldaAvanzada implements Celda {
 	}
 
 	public void union(int item1, int item2) {
-		int root1 = find(item1);
-		int root2 = find(item2);
+		root1 = find(item1);
+		root2 = find(item2);
 		// System.out.println(root1 + " " + root2);
 		if (root1 != root2) {
 			if (rank[root1] < rank[root2]) {
@@ -108,13 +108,9 @@ public class CeldaAvanzada implements Celda {
 	@Override
 	public String toString() {
 		String out = "";
-
-		/*
-		 * for (int i = 0; i < grid.length; i++) { for (int j = 0; j < grid[0].length;
-		 * j++) { out += grid[i][j] ? "X" : "."; out += (j < grid[0].length - 1) ? " " :
-		 * ""; } out += "\n"; }
-		 */
-
+		for (int i = 0; i < grid.length; i++) {
+			out += (grid[i] ? "X" : ".") + (i % n == 0 && i != 0 ? "\n" : "");
+		}
 		return out;
 	}
 }
