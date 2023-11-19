@@ -11,29 +11,55 @@ public class CeldaAvanzada implements Celda {
 	private int[] parent;
 	private int[] rank;
 
-	public int find(int item) {
+	/*public int find(int item) {
 		while (item != parent[item]) {
 			parent[item] = parent[parent[item]];
-			item = parent[item];
+			item = parent[parent[item]];
 		}
 		return item;
-	}
-
+	}*/
+	
+	public int find(int item) {
+        int root = item;
+        while (root != parent[root])
+            root = parent[root];
+        while (item != root) {
+            int newItem = parent[item];
+            parent[item] = root;
+            item = newItem;
+        }
+        return root;
+    }
+	
 	public void union(int item1, int item2) {
 		root1 = find(item1);
 		root2 = find(item2);
-		// System.out.println(root1 + " " + root2);
-		if (root1 != root2) {
-			if (rank[root1] < rank[root2]) {
-				parent[root1] = root2;
-			} else if (rank[root1] > rank[root2]) {
-				parent[root2] = root1;
-			} else {
-				parent[root1] = root2;
-				rank[root2]++;
-			}
-		}
+
+		if (root1 == root2) return;
+		if (rank[root1] < rank[root2]) {
+			parent[root1] = root2;
+		} else if (rank[root1] > rank[root2]) {
+			parent[root2] = root1;
+		} else {
+			parent[root1] = root2;
+			rank[root2]++;
+		}		
 	}
+	
+	/*public void union(int p, int q) {
+        root1 = find(p);
+        root2 = find(q);
+        if (root1 == root2) return;
+
+        if (rank[root1] < rank[root2]) {
+            parent[root1] = root2;
+            rank[root2] += rank[root1];
+        }
+        else {
+            parent[root2] = root1;
+            rank[root1] += rank[root2];
+        }
+    }*/
 
 	/**
 	 * Inicializa la cuadrícula con un tamaño específico.
@@ -77,9 +103,9 @@ public class CeldaAvanzada implements Celda {
 			grid[cellIndex] = true;
 
 			if (i == 0) {
-				union(cellIndex, n2); // Connect to virtual top node
+				parent[cellIndex] = n2; // Connect to virtual top node
 			} else if (i == n - 1) {
-				union(cellIndex, n2 + 1); // Connect to virtual bottom node
+				parent[cellIndex] = n2+1; // Connect to virtual bottom node
 			}
 
 			for (int k : nei) {
@@ -87,6 +113,7 @@ public class CeldaAvanzada implements Celda {
 					union(cellIndex, cellIndex + k);
 				}
 			}
+			cortocircuito = find(n2)==find(n2+1);
 		}
 	}
 
@@ -97,7 +124,7 @@ public class CeldaAvanzada implements Celda {
 	 */
 	@Override
 	public boolean Cortocircuito() {
-		return find(n2) == find(n2 + 1);
+		return cortocircuito;
 	}
 
 	/**
