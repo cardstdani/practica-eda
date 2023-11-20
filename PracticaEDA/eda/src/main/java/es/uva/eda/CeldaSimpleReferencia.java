@@ -30,6 +30,17 @@ public class CeldaSimpleReferencia implements Celda {
 		roto = false; // Cuidado con olvidarse esto!
 		ui = -1;
 		uj = -1;
+		conductor = new boolean[][] {{false, false, true, false, false, false, false, false, false, false},
+			 {false, false, true, false, false, false, false, false, false, false},
+			 {false, false, true, false, false, false, false, false, false, false},
+			 {false, false, true, false, false, false, false, false, false, false},
+			 {false, false, true, false, true, true, true, false, false, false},
+			 {false, false, true, false, true, false, true, false, false, false},
+			 {false, false, true, true, true, true, true, false, false, false},
+			 {false, false, false, false, false, true, false, false, false, false},
+			 {false, false, false, false, true, false, false, false, false, false},
+			 {false, false, false, false, true, false, false, false, false, false}};
+		this.n = conductor.length;
 	}
 
 	@Override
@@ -59,7 +70,7 @@ public class CeldaSimpleReferencia implements Celda {
 		return roto;
 	}
 
-	protected void BorrarVisitados() {
+	public void BorrarVisitados() {
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < n; j++) {
 				visitado[i][j] = false;
@@ -67,7 +78,10 @@ public class CeldaSimpleReferencia implements Celda {
 		}
 	}
 
-	protected boolean HayCamino(int i, int j, int i_lim) {
+	public boolean HayCamino(int i, int j, int i_lim) {
+		ui = i;
+		uj = j;
+		System.out.println(this);
 		// Posición en límites
 		if (i < 0 || i >= n || j < 0 || j >= n) {
 			return false;
@@ -100,7 +114,7 @@ public class CeldaSimpleReferencia implements Celda {
 		String res = "";
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < n; j++) {
-				res += i == ui && j == uj ? "* " : conductor[i][j] ? "X " : ". ";
+				res += i == ui && j == uj ? "* " : conductor[i][j]&&!visitado[i][j] ? "X " : ". ";
 			}
 			res += "\n";
 		}
