@@ -100,7 +100,7 @@ public class CeldaSimpleReferencia implements Celda {
 		String res = "";
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < n; j++) {
-				res += i == ui && j == uj ? "*" : conductor[i][j] ? "X" : ".";
+				res += i == ui && j == uj ? "* " : conductor[i][j] ? "X " : ". ";
 			}
 			res += "\n";
 		}

@@ -5,21 +5,21 @@ public class CeldaAvanzada implements Celda {
 	private int[] nei;
 	private boolean cortocircuito;
 	private int n, n2, root1, root2;
-	private int cellIndex;
+	private int cellIndex, neiIndex;
 
 	// Disjoint Set
 	private int[] parent;
 	private int[] rank;
 
-	/*public int find(int item) {
+	public int find(int item) {
 		while (item != parent[item]) {
 			parent[item] = parent[parent[item]];
 			item = parent[parent[item]];
 		}
 		return item;
-	}*/
+	}
 	
-	public int find(int item) {
+	/*public int find(int item) {
         int root = item;
         while (root != parent[root])
             root = parent[root];
@@ -29,7 +29,7 @@ public class CeldaAvanzada implements Celda {
             item = newItem;
         }
         return root;
-    }
+    }*/
 	
 	public void union(int item1, int item2) {
 		root1 = find(item1);
@@ -103,18 +103,19 @@ public class CeldaAvanzada implements Celda {
 			grid[cellIndex] = true;
 
 			if (i == 0) {
-				parent[cellIndex] = n2; // Connect to virtual top node
+				union(cellIndex, n2);// Connect to virtual top node
 			} else if (i == n - 1) {
-				parent[cellIndex] = n2+1; // Connect to virtual bottom node
+				union(cellIndex, n2+1); // Connect to virtual bottom node
 			}
 
 			for (int k : nei) {
-				if (cellIndex + k >= 0 && cellIndex + k < n2 && grid[cellIndex + k]) {
+				neiIndex = cellIndex+k;
+				if (neiIndex >= 0 && neiIndex < n2 && Math.abs(((neiIndex) % n) - (cellIndex % n)) <= 1 && grid[cellIndex + k]) {
 					union(cellIndex, cellIndex + k);
 				}
 			}
 			cortocircuito = find(n2)==find(n2+1);
-		}
+		}		
 	}
 
 	/**
@@ -136,7 +137,12 @@ public class CeldaAvanzada implements Celda {
 	public String toString() {
 		String out = "";
 		for (int i = 0; i < grid.length; i++) {
-			out += (grid[i] ? "X" : ".") + (i % n == 0 && i != 0 ? "\n" : "");
+			if(i!=neiIndex) {
+				out += (grid[i] ? "X " : ". ") + ((i+1) % n == 0 && i != 0 ? "\n" : "");	
+			}else {
+				out += "A ";
+			}
+			
 		}
 		return out;
 	}
