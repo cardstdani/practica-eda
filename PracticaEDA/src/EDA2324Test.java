@@ -1,5 +1,3 @@
-package es.uva.eda;
-
 import java.util.Random;
 
 public class EDA2324Test {

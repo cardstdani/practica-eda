@@ -1,5 +1,3 @@
-package es.uva.eda;
-
 /**
  * Para más detalles, visitar el github:
  * https://github.com/cardstdani/practica-eda

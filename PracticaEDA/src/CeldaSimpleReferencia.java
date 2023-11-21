@@ -1,5 +1,3 @@
-package es.uva.eda;
-
 public class CeldaSimpleReferencia implements Celda {
 
 	// Desplazamiento de vecinos
