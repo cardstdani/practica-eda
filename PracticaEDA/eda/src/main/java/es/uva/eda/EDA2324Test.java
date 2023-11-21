@@ -33,15 +33,21 @@ public class EDA2324Test {
 	}
 
 	public static void main(String[] args) {
+
+		Test(250, 1, 32512);
+		Test(500, 1, 132837);
+		Test(1000, 1, 515474);
+		Test(2000, 1, 2091232);
+		Test(250, 3, 32308);
+		Test(500, 3, 130051);
+		Test(1000, 3, 526449);
+		Test(2000, 3, 2094060);
+
 		/*
-		 * Test( 250, 1, 32512); Test( 500, 1, 132837); Test(1000, 1, 515474);
-		 * Test(2000, 1, 2091232); Test( 250, 3, 32308); Test( 500, 3, 130051);
-		 * Test(1000, 3, 526449); Test(2000, 3, 2094060);
+		 * CeldaSimpleReferencia celda = new CeldaSimpleReferencia();
+		 * celda.Inicializar(10); System.out.println(celda.HayCamino(9,4, 0));
+		 * System.out.println(celda);
 		 */
-		CeldaSimpleReferencia celda = new CeldaSimpleReferencia();
-		celda.Inicializar(10);
-		System.out.println(celda.HayCamino(9,4, 0));
-		System.out.println(celda);
 	}
 
 }

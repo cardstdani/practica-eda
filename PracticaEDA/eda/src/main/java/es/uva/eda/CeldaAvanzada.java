@@ -103,15 +103,15 @@ public class CeldaAvanzada implements Celda {
 			grid[cellIndex] = true;
 
 			if (i == 0) {
-				union(cellIndex, n2);// Connect to virtual top node
+				union(cellIndex, n2);
 			} else if (i == n - 1) {
-				union(cellIndex, n2+1); // Connect to virtual bottom node
+				union(cellIndex, n2+1);
 			}
 
 			for (int k : nei) {
 				neiIndex = cellIndex+k;
-				if (neiIndex >= 0 && neiIndex < n2 && Math.abs(((neiIndex) % n) - (cellIndex % n)) <= 1 && grid[cellIndex + k]) {
-					union(cellIndex, cellIndex + k);
+				if (neiIndex >= 0 && neiIndex < n2 && Math.abs((neiIndex % n) - (cellIndex % n)) <= 1 && grid[neiIndex]) {
+					union(cellIndex, neiIndex);
 				}
 			}
 			cortocircuito = find(n2)==find(n2+1);

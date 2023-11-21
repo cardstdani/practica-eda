@@ -30,17 +30,6 @@ public class CeldaSimpleReferencia implements Celda {
 		roto = false; // Cuidado con olvidarse esto!
 		ui = -1;
 		uj = -1;
-		conductor = new boolean[][] {{false, false, true, false, false, false, false, false, false, false},
-			 {false, false, true, false, false, false, false, false, false, false},
-			 {false, false, true, false, false, false, false, false, false, false},
-			 {false, false, true, false, false, false, false, false, false, false},
-			 {false, false, true, false, true, true, true, false, false, false},
-			 {false, false, true, false, true, false, true, false, false, false},
-			 {false, false, true, true, true, true, true, false, false, false},
-			 {false, false, false, false, false, true, false, false, false, false},
-			 {false, false, false, false, true, false, false, false, false, false},
-			 {false, false, false, false, true, false, false, false, false, false}};
-		this.n = conductor.length;
 	}
 
 	@Override
@@ -79,9 +68,6 @@ public class CeldaSimpleReferencia implements Celda {
 	}
 
 	public boolean HayCamino(int i, int j, int i_lim) {
-		ui = i;
-		uj = j;
-		System.out.println(this);
 		// Posición en límites
 		if (i < 0 || i >= n || j < 0 || j >= n) {
 			return false;
