@@ -1,3 +1,6 @@
+/**
+ * @author Daniel García Solla
+ */
 public class CeldaAvanzada implements Celda {
     private boolean[] grid;
     private int[] nei;
@@ -9,55 +12,41 @@ public class CeldaAvanzada implements Celda {
     private int[] parent;
     private int[] rank;
 
-	public int find(int item) {
-		while (item != parent[item]) {
-			parent[item] = parent[parent[item]];
-			item = parent[parent[item]];
-		}
-		return item;
-	}
-
-    /*public int find(int item) {
-        int root = item;
-        while (root != parent[root])
-            root = parent[root];
-        while (item != root) {
-            int newItem = parent[item];
-            parent[item] = root;
-            item = newItem;
+    /**
+     * Encuentra el representante del conjunto del elemento dado como entrada.
+     *
+     * @param item Un elemento de la estructura.
+     * @return La raíz del conjunto al que pertenece el elemento.
+     */
+    public int find(int item) {
+        while (item != parent[item]) {
+            parent[item] = parent[parent[item]];
+            item = parent[item];
         }
-        return root;
-    }*/
+        return item;
+    }
 
+    /**
+     * Une dos conjuntos a los que pertenecen los elementos dados.
+     *
+     * @param item1 Primer elemento
+     * @param item2 Segundo elemento
+     */
     public void union(int item1, int item2) {
         root1 = find(item1);
         root2 = find(item2);
 
-        if (root1 == root2) return;
-        if (rank[root1] < rank[root2]) {
-            parent[root1] = root2;
-        } else if (rank[root1] > rank[root2]) {
-            parent[root2] = root1;
-        } else {
-            parent[root1] = root2;
-            rank[root2]++;
+        if (root1 != root2) {
+            if (rank[root1] == rank[root2]) {
+                parent[root1] = root2;
+                rank[root2]++;
+            } else if (rank[root1] > rank[root2]) {
+                parent[root2] = root1;
+            } else {
+                parent[root1] = root2;
+            }
         }
     }
-	
-	/*public void union(int p, int q) {
-        root1 = find(p);
-        root2 = find(q);
-        if (root1 == root2) return;
-
-        if (rank[root1] < rank[root2]) {
-            parent[root1] = root2;
-            rank[root2] += rank[root1];
-        }
-        else {
-            parent[root2] = root1;
-            rank[root1] += rank[root2];
-        }
-    }*/
 
     /**
      * Inicializa la cuadrícula con un tamaño específico.
@@ -108,7 +97,7 @@ public class CeldaAvanzada implements Celda {
 
             for (int k : nei) {
                 neiIndex = cellIndex + k;
-                if (neiIndex >= 0 && neiIndex < n2 && Math.abs((neiIndex % n) - (cellIndex % n)) <= 1 && grid[neiIndex]) {
+                if (neiIndex >= 0 && neiIndex < n2 && grid[neiIndex] && Math.abs((neiIndex % n) - (cellIndex % n)) <= 1) {
                     union(cellIndex, neiIndex);
                 }
             }

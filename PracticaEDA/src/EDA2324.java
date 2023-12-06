@@ -26,6 +26,7 @@ public class EDA2324 {
         long tpo_total = 0;
         int num_rayos = 0;
         for (int k = 0; k < num_rep; k++) {
+            System.gc();
             // Simulación
             celda.Inicializar(n);
             num_rayos = 0;
