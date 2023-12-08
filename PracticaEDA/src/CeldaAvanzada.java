@@ -1,12 +1,22 @@
 /**
+ * Para optimizar la complejidad del algoritmo original y que el resultado de una simulación se pueda realizar en tiempo
+ * O(n^2) o algo lo suficientemente próximo, es necesario reducir el tiempo de la función RayoCosmico() a O(1).
+ * Para ello, este código implementa el algoritmo UnionFind con compresión de caminos y unión por rango. Así, cada vez que
+ * se añade un elemento a la matriz, se une con los conjuntos de sus vecinos y se comprueba si hay cortocircuito con 2 nodos
+ * extra que representan los bordes de arriba/abajo de la matriz. En caso de que haya cortocircuito, los bordes estarán en el
+ * mismo conjunto.
+ * Con estas optimizaciones, se alcanza un tiempo amortizado en RayoCosmico() de O(α(n)), que no es constante pero se
+ * aproxima lo suficiente
+ *
  * @author Daniel García Solla
  */
 public class CeldaAvanzada implements Celda {
-    private boolean[] grid;
-    private int[] nei;
+    private boolean[][] grid;
+    private int[][] nei = new int[][]{{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0},
+            {1, 1}};
     private boolean cortocircuito;
     private int n, n2, root1, root2;
-    private int cellIndex, neiIndex;
+    private int cellIndex;
 
     // Disjoint Set
     private int[] parent;
@@ -57,11 +67,11 @@ public class CeldaAvanzada implements Celda {
     public void Inicializar(int n) {
         this.n = n;
         this.n2 = n * n;
-        grid = new boolean[n * n];
+        grid = new boolean[n][n];
         cortocircuito = false;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                grid[i * n + j] = false;
+                grid[i][j] = false;
             }
         }
 
@@ -72,7 +82,6 @@ public class CeldaAvanzada implements Celda {
             parent[i] = i;
             rank[i] = 0;
         }
-        nei = new int[]{-n, n, n - 1, n + 1, -n - 1, -n + 1, -1, 1};
     }
 
     /**
@@ -86,8 +95,8 @@ public class CeldaAvanzada implements Celda {
     @Override
     public void RayoCosmico(int i, int j) {
         cellIndex = i * n + j;
-        if (!grid[cellIndex]) {
-            grid[cellIndex] = true;
+        if (!grid[i][j]) {
+            grid[i][j] = true;
 
             if (i == 0) {
                 union(cellIndex, n2);
@@ -95,10 +104,12 @@ public class CeldaAvanzada implements Celda {
                 union(cellIndex, n2 + 1);
             }
 
-            for (int k : nei) {
-                neiIndex = cellIndex + k;
-                if (neiIndex >= 0 && neiIndex < n2 && grid[neiIndex] && Math.abs((neiIndex % n) - (cellIndex % n)) <= 1) {
-                    union(cellIndex, neiIndex);
+            int newI = 0, newJ = 0;
+            for (int[] k : nei) {
+                newI = k[0] + i;
+                newJ = k[1] + j;
+                if (newI >= 0 && newJ >= 0 && newI < grid.length && newJ < grid[0].length && grid[newI][newJ]) {
+                    union(cellIndex, newI * n + newJ);
                 }
             }
             cortocircuito = find(n2) == find(n2 + 1);
@@ -123,14 +134,18 @@ public class CeldaAvanzada implements Celda {
     @Override
     public String toString() {
         String out = "";
-        for (int i = 0; i < grid.length; i++) {
-            if (i != neiIndex) {
-                out += (grid[i] ? "X " : ". ") + ((i + 1) % n == 0 && i != 0 ? "\n" : "");
-            } else {
-                out += "A ";
-            }
 
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                out += grid[i][j] ? "X" : ".";
+
+                if (j < grid[0].length - 1) {
+                    out += " ";
+                }
+            }
+            out += "\n";
         }
+
         return out;
     }
 }
