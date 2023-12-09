@@ -94,10 +94,10 @@ public class CeldaAvanzada implements Celda {
      */
     @Override
     public void RayoCosmico(int i, int j) {
-        cellIndex = i * n + j;
         if (!grid[i][j]) {
             grid[i][j] = true;
 
+            cellIndex = i * n + j;
             if (i == 0) {
                 union(cellIndex, n2);
             } else if (i == n - 1) {
@@ -134,7 +134,6 @@ public class CeldaAvanzada implements Celda {
     @Override
     public String toString() {
         String out = "";
-
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
                 out += grid[i][j] ? "X" : ".";
@@ -145,7 +144,6 @@ public class CeldaAvanzada implements Celda {
             }
             out += "\n";
         }
-
         return out;
     }
 }
