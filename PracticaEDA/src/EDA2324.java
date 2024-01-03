@@ -2,8 +2,7 @@
  * @author danie
  */
 
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class EDA2324 {
 
@@ -21,10 +20,13 @@ public class EDA2324 {
             System.out.print("Repeticiones = ");
             num_rep = teclado.nextInt();
         }
-        Celda celda = new CeldaSimpleReferencia();
+        CeldaAvanzada celda = new CeldaAvanzada();
         long tpo_total = 0;
         int num_rayos = 0;
+        List<Float> rayos = new ArrayList<>();
+        List<Float> atomos = new ArrayList<>();
         for (int k = 0; k < num_rep; k++) {
+            rnd = new Random();
             System.gc();
             // Simulación
             celda.Inicializar(n);
@@ -38,32 +40,25 @@ public class EDA2324 {
             }
             long tpo2 = System.nanoTime();
             tpo_total += tpo2 - tpo1;
-            System.out.print("#");
-        }
-        System.out.printf("\nTiempo medio = %.5f\n", 1e-9 * tpo_total / num_rep);
-        System.out.println("Número de rayos = " + num_rayos);
-        //System.out.println(celda);
+            //System.out.print("#");
 
-        rnd = new Random(SEMILLA);
-        celda = new CeldaAvanzada();
-        tpo_total = 0;
-        num_rayos = 0;
-        for (int k = 0; k < num_rep; k++) {
-            System.gc();
-            // Simulación
-            celda.Inicializar(n);
-            num_rayos = 0;
-            long tpo1 = System.nanoTime();
-            while (!celda.Cortocircuito()) {
-                // Elegir átomo al azar y transmutarlo
-                int i = rnd.nextInt(n), j = rnd.nextInt(n);
-                celda.RayoCosmico(i, j);
-                num_rayos++;
+            float sum = 0;
+            for (int i = 0; i < celda.grid.length; i++) {
+                for (int j = 0; j < celda.grid[0].length; j++) {
+                    if (celda.grid[i][j]) sum++;
+                }
             }
-            long tpo2 = System.nanoTime();
-            tpo_total += tpo2 - tpo1;
-            System.out.print("#");
+
+            //System.out.println(sum / (n * n));
+            atomos.add(sum / (n * n));
+            rayos.add((float) num_rayos / (n * n));
         }
+
+        System.out.println();
+        System.out.println(atomos.stream().mapToDouble(a -> a).summaryStatistics());
+        System.out.println(atomos.stream().mapToDouble(a -> a).average().getAsDouble()*n*n);
+        System.out.println(rayos.stream().mapToDouble(a -> a).summaryStatistics());
+        System.out.println(rayos.stream().mapToDouble(a -> a).average().getAsDouble()*n*n);
         System.out.printf("\nTiempo medio = %.5f\n", 1e-9 * tpo_total / num_rep);
         System.out.println("Número de rayos = " + num_rayos);
     }

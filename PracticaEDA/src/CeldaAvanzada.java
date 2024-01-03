@@ -11,7 +11,7 @@
  * @author Daniel García Solla
  */
 public class CeldaAvanzada implements Celda {
-    private boolean[][] grid;
+    public boolean[][] grid;
     private int[][] nei = new int[][]{{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0},
             {1, 1}};
     private boolean cortocircuito;
