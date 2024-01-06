@@ -1,7 +1,7 @@
 /**
  * Para más detalles, visitar el github:
  * https://github.com/cardstdani/practica-eda
- * 
+ *
  * @author Daniel García Solla
  */
 public class CeldaSimple2D {
@@ -13,7 +13,7 @@ public class CeldaSimple2D {
 
 	/**
 	 * Inicializa la cuadrícula con un tamaño específico.
-	 * 
+	 *
 	 * @param n El tamaño de la cuadrícula (n x n).
 	 */
 
@@ -33,7 +33,7 @@ public class CeldaSimple2D {
 	 * Aplica un rayo cósmico en una posición específica de la cuadrícula. Si la
 	 * celda en la posición (i, j) está desactivada, la activa y verifica si hay un
 	 * cortocircuito.
-	 * 
+	 *
 	 * @param i Índice de la fila.
 	 * @param j Índice de la columna.
 	 */
@@ -62,7 +62,7 @@ public class CeldaSimple2D {
 	 * Método auxiliar para verificar si hay un cortocircuito desde una celda
 	 * específica. Utiliza búsqueda en profundidad para verificar si hay un camino
 	 * desde la celda (i, j) hasta el borde opuesto.
-	 * 
+	 *
 	 * @param i  Índice de la fila.
 	 * @param j  Índice de la columna.
 	 * @param up Dirección de la búsqueda (0 para abajo, 1 para arriba).
@@ -89,7 +89,7 @@ public class CeldaSimple2D {
 
 	/**
 	 * Verifica si hay un cortocircuito en la cuadrícula.
-	 * 
+	 *
 	 * @return true si hay un cortocircuito, false en caso contrario.
 	 */
 	public boolean Cortocircuito() {
@@ -98,7 +98,7 @@ public class CeldaSimple2D {
 
 	/**
 	 * Devuelve un string con la cuadrícula.
-	 * 
+	 *
 	 * @return Una cadena de texto representando el estado actual de la cuadrícula.
 	 */
 	@Override
