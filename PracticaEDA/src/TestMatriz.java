@@ -9,8 +9,8 @@ public class TestMatriz {
         Random rnd;
         long t = 0;
         boolean[][] visited;
-        BufferedWriter bw = new BufferedWriter(new FileWriter("t_values_matrix3.txt", true));
-        for (int n = 2; n < 1000; n += 2) {
+        BufferedWriter bw = new BufferedWriter(new FileWriter("t_values_matrix22.txt", true));
+        for (int n = 2; n < 622; n += 2) {
             for (int k = 0; k < n; k++) {
                 rnd = new Random();
                 visited = new boolean[n][n];
@@ -22,13 +22,11 @@ public class TestMatriz {
                 }
 
                 t = System.nanoTime();
-                /*for (int i = 0; i < n; i++) {
+                for (int i = 0; i < n; i++) {
                     for (int j = 0; j < n; j++) {
                         visited[i][j] = false;
                     }
-                }*/
-
-                visited = new boolean[n][n];
+                }
                 t = System.nanoTime() - t;
                 bw.write(n + " " + t + "\n");
                 bw.flush();
