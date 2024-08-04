@@ -30,17 +30,17 @@ import java.util.concurrent.*;
 public class MedirTiempo {
     public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
         Random rnd;
-        CeldaSimple3D celda = new CeldaSimple3D();
+        CeldaSimple3D2 celda = new CeldaSimple3D2();
         long t = 0;
-        BufferedWriter bw = new BufferedWriter(new FileWriter("t_values.txt", true));
-        for (int n = 266; n < 1000; n += 4) {
-            for (int k = 0; k < 1; k++) {
+        BufferedWriter bw = new BufferedWriter(new FileWriter("t_values_1D2.txt", true));
+        for (int n = 2; n < 1000; n += 4) {
+            for (int k = 0; k < n; k++) {
                 rnd = new Random();
-                celda.Inicializar(n, n, n);
+                celda.Inicializar(n, 1, 1);
 
                 t = System.nanoTime();
                 while (!celda.Cortocircuito()) {
-                    celda.RayoCosmico(rnd.nextInt(n), rnd.nextInt(n), rnd.nextInt(n));
+                    celda.RayoCosmico(rnd.nextInt(n), 0,0);
                 }
                 t = System.nanoTime() - t;
                 bw.write(n + " " + t + "\n");

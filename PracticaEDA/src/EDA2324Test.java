@@ -6,16 +6,16 @@ public class EDA2324Test {
 
     public static void Test(int n, int m, int r) {
         Random rnd = new Random(SEMILLA);
-        Celda celda = new CeldaSimple();
+        CeldaSimple3D2 celda = new CeldaSimple3D2();
         int num_rayos = 0;
         // Simulación
         for (int k = 0; k < m; k++) {
-            celda.Inicializar(n);
+            celda.Inicializar(n, n, 1);
             num_rayos = 0;
             while (!celda.Cortocircuito()) {
                 // Elegir átomo al azar y transmutarlo
                 int i = rnd.nextInt(n), j = rnd.nextInt(n);
-                celda.RayoCosmico(i, j);
+                celda.RayoCosmico(i, j, 0);
                 num_rayos++;
             }
         }
@@ -31,7 +31,6 @@ public class EDA2324Test {
     }
 
     public static void main(String[] args) {
-
         Test(250, 1, 32512);
         Test(500, 1, 132837);
         Test(1000, 1, 515474);
