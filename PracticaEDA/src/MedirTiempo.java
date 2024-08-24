@@ -33,7 +33,7 @@ public class MedirTiempo {
         CeldaSimple3D2 celda = new CeldaSimple3D2();
         long t = 0;
         BufferedWriter bw = new BufferedWriter(new FileWriter("t_values_2D2.txt", true));
-        for (int n = 2; n < 1000; n += 4) {
+        for (int n = 466; n < 1000; n += 4) {
             for (int k = 0; k < n/2; k++) {
                 rnd = new Random();
                 celda.Inicializar(n, n, 1);
